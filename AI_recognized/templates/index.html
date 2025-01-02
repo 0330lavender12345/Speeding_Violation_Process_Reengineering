@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+    <title>AI 辨識燈桿傳送資料模擬</title>
+</head>
+<body>
+    <div class="container">
+        <h1>AI 辨識燈桿傳送資料模擬</h1>
+        <div class="buttons">
+            <button onclick="sendData()">傳送燈桿拍攝資料 + AI 辨識</button>
+            <button onclick="ExportCSV()">匯出成 CSV</button>
+        </div>
+    </div>
+    <script>
+        function sendData() {
+            fetch('/run-python', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('資料傳送失敗，請稍後再試');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "success") {
+                    alert('已成功傳送全部照片與資料！');
+                } else {
+                    alert('資料傳送部分失敗：' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('傳送失敗：' + error.message);
+                console.error('錯誤:', error);
+            });
+        }
+        function ExportCSV() {
+            fetch('/run-python2', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('匯出發生錯誤！');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "success") {
+                    alert('已成功匯出 CSV 檔案！');
+                } else {
+                    alert('匯出 CSV 失敗：' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('匯出失敗：' + error.message);
+                console.error('錯誤:', error);
+            });
+        }
+    </script>
+</body>
+</html>
