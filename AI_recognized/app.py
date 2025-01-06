@@ -64,7 +64,15 @@ def run_python():
             'A01': {'Lamp_Post_ID': 'D004', 'Speed_Limit': 50, 'Vehicle_Speed': 70, 'Violation_Location': '台北市中正區信義路二段23號', 'Record_Timestamp': '2024/1/10 12:00 AM'},
             'A02': {'Lamp_Post_ID': 'D005', 'Speed_Limit': 50, 'Vehicle_Speed': 75, 'Violation_Location': '台北市大安區信義路三段23號', 'Record_Timestamp': '2024/1/10 12:01 AM'},
             'A03': {'Lamp_Post_ID': 'D006', 'Speed_Limit': 50, 'Vehicle_Speed': 65, 'Violation_Location': '台北市大安區信義路四段106號', 'Record_Timestamp': '2024/1/10 12:02 AM'},
-            'A04': {'Lamp_Post_ID': 'D007', 'Speed_Limit': 60, 'Vehicle_Speed': 80, 'Violation_Location': '台北市信義區信義路五段23號', 'Record_Timestamp': '2024/1/10 12:03 AM'}
+            'A04': {'Lamp_Post_ID': 'D007', 'Speed_Limit': 60, 'Vehicle_Speed': 80, 'Violation_Location': '台北市信義區信義路五段23號', 'Record_Timestamp': '2024/1/10 12:03 AM'},
+            'A05': {'Lamp_Post_ID': 'D008', 'Speed_Limit': 50, 'Vehicle_Speed': 75, 'Violation_Location': '台北市內湖區內湖路1段324號', 'Record_Timestamp': '2024/1/10 12:04 AM'},
+            'A06': {'Lamp_Post_ID': 'D009', 'Speed_Limit': 50, 'Vehicle_Speed': 65, 'Violation_Location': '台北市內湖區行善路233號', 'Record_Timestamp': '2024/1/10 12:05 AM'},
+            'A07': {'Lamp_Post_ID': 'D010', 'Speed_Limit': 50, 'Vehicle_Speed': 76, 'Violation_Location': '台北市文山區羅斯福路6段226號', 'Record_Timestamp': '2024/1/10 12:06 AM'},
+            'A08': {'Lamp_Post_ID': 'D011', 'Speed_Limit': 50, 'Vehicle_Speed': 60, 'Violation_Location': '台北市松山區健康路300號', 'Record_Timestamp': '2024/1/10 12:07 AM'},
+            'A09': {'Lamp_Post_ID': 'D012', 'Speed_Limit': 50, 'Vehicle_Speed': 63, 'Violation_Location': '台北市萬華區和平西路3段199號', 'Record_Timestamp': '2024/1/10 12:08 AM'},
+            'A10': {'Lamp_Post_ID': 'D013', 'Speed_Limit': 50, 'Vehicle_Speed': 75, 'Violation_Location': '台北市萬華區環河南路1段77號', 'Record_Timestamp': '2024/1/10 12:09 AM'},
+            'A11': {'Lamp_Post_ID': 'D014', 'Speed_Limit': 50, 'Vehicle_Speed': 75, 'Violation_Location': '台北市北投區行義路241號', 'Record_Timestamp': '2024/1/10 12:10 AM'},
+            'A12': {'Lamp_Post_ID': 'D015', 'Speed_Limit': 50, 'Vehicle_Speed': 60, 'Violation_Location': '台北市中山區明水路325號', 'Record_Timestamp': '2024/1/10 12:11 AM'},
         }
 
         for image_name in os.listdir(image_folder_path):
@@ -81,12 +89,32 @@ def run_python():
                             latitude, longitude = get_coordinates(data['Violation_Location'])
 
                             if latitude is not None and longitude is not None:
-                                # 插入資料
+                                # 插入 violation_record
                                 cursor.execute("""
                                     INSERT INTO violation_record 
-                                    (Lamp_Post_ID, Speed_Limit, Vehicle_Speed, Violation_Location,Record_Timestamp, Image, Longitude, Latitude) 
-                                    VALUES (%s, %s, %s,%s, %s, %s, %s, %s)
-                                    """, (data['Lamp_Post_ID'], data['Speed_Limit'], data['Vehicle_Speed'], data['Violation_Location'],datetime.strptime(data['Record_Timestamp'], date_format), image_name, longitude, latitude))
+                                    (Lamp_Post_ID, Speed_Limit, Vehicle_Speed, Violation_Location, Record_Timestamp, Image, Longitude, Latitude) 
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                                """, (data['Lamp_Post_ID'], data['Speed_Limit'], data['Vehicle_Speed'], data['Violation_Location'], datetime.strptime(data['Record_Timestamp'], date_format), image_name, longitude, latitude))
+                                mysql.connection.commit()
+
+                                # 通過唯一條件查詢剛剛插入的 Violation_Report_ID
+                                cursor.execute("SELECT Violation_Report_ID FROM violation_record WHERE Image = %s LIMIT 1", (image_name,))
+                                violation_id = cursor.fetchone()
+                                if violation_id:
+                                    violation_id = violation_id[0]
+                                    print(f"Retrieved Violation_Report_ID: {violation_id}")
+
+                                    # 插入到 national_case_report
+                                    cursor.execute("""
+                                        INSERT INTO national_case_report 
+                                        (National_Violation_Report_ID, Lamp_Post_ID, Speed_Limit, Vehicle_Speed, Violation_Location, Record_Timestamp, Image, Longitude, Latitude) 
+                                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                    """, (violation_id, data['Lamp_Post_ID'], data['Speed_Limit'], data['Vehicle_Speed'], data['Violation_Location'], datetime.strptime(data['Record_Timestamp'], date_format), image_name, longitude, latitude))
+                                    mysql.connection.commit()
+                                else:
+                                    print(f"Violation_Report_ID not found for Image: {image_name}")
+
+
                             else:
                                 print(f"未能獲取經緯度: {data['Violation_Location']}")
                         else:
@@ -132,6 +160,12 @@ def run_python():
                             Final_Response_Time = %s
                         WHERE violation_record.Image = %s;
                         """, (current_time, image_name))
+                        cursor.execute("""
+                        UPDATE national_case_report
+                        SET Recognition_Result = 'DD',
+                            Final_Response_Time = %s
+                        WHERE Image = %s;
+                        """, (current_time, image_name))
                         mysql.connection.commit()
                     except Exception as e:
                         print(f"插入資料庫時出錯: {e}")
@@ -145,6 +179,12 @@ def run_python():
                         SET Recognition_Result = 'NA',
                             Final_Response_Time = %s
                         WHERE violation_record.Image = %s;
+                        """, (current_time, image_name))
+                        cursor.execute("""
+                        UPDATE national_case_report
+                        SET Recognition_Result = 'NA',
+                            Final_Response_Time = %s
+                        WHERE Image = %s;
                         """, (current_time, image_name))
                         mysql.connection.commit()
                     except Exception as e:
@@ -228,6 +268,27 @@ def run_python():
                                         WHERE 
                                             violation_record.Image = %s;
                                         """, (text, current_time, image_name))
+                                    cursor.execute(
+                                        """
+                                        UPDATE national_case_report
+                                        SET License_Plate = %s,
+                                            Recognition_Result = 'OK',
+                                            Final_Response_Time = %s
+                                        WHERE 
+                                            Image = %s;
+                                        """, (text, current_time, image_name))
+                                    cursor.execute(
+                                        """
+                                        INSERT INTO vehicle_registration
+                                        (License_Plate, Violation_Report_ID)
+                                        VALUES (%s, (
+                                            SELECT Violation_Report_ID
+                                            FROM Violation_record
+                                            WHERE License_Plate = %s
+                                            LIMIT 1
+                                        ))
+                                        """, (text, text)
+                                    )
                                     mysql.connection.commit()
                                     break
 
@@ -243,6 +304,38 @@ def run_python():
                                         Final_Response_Time = %s
                                     WHERE violation_record.Image = %s;
                                     """, (text, current_time, image_name))
+                                    cursor.execute(
+                                        """
+                                        UPDATE national_case_report
+                                        SET License_Plate = %s,
+                                            Recognition_Result = 'NA',
+                                            Final_Response_Time = %s
+                                        WHERE 
+                                            Image = %s;
+                                        """, (text, current_time, image_name))
+
+                                    # 提交事務
+                                    mysql.connection.commit()
+                                except Exception as e:
+                                    print(f"插入資料庫時出錯: {e}")
+                        else:
+                                #送至人工辨識資料庫程式碼
+                                try:
+                                    # 插入資料到資料庫
+                                    cursor.execute("""UPDATE violation_record
+                                    SET License_Plate = %s, 
+                                        Recognition_Result = 'NA',
+                                        Final_Response_Time = %s
+                                    WHERE violation_record.Image = %s;
+                                    """, (text, current_time, image_name))
+                                    cursor.execute(
+                                        """
+                                        UPDATE national_case_report
+                                        SET License_Plate = %s,
+                                            Recognition_Result = 'NA',
+                                            Final_Response_Time = %s
+                                        WHERE Image = %s;
+                                        """, (text, current_time, image_name))
 
                                     # 提交事務
                                     mysql.connection.commit()
