@@ -18,7 +18,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'       # MySQL 主機
 app.config['MYSQL_USER'] = 'root'           # MySQL 使用者
-app.config['MYSQL_PASSWORD'] = '0727'   # MySQL 密碼
+app.config['MYSQL_PASSWORD'] = '1234'   # MySQL 密碼
 app.config['MYSQL_DATABASE'] = 'violation_db'   # MySQL 資料庫名稱
 
 # Google Geocoding API 設定

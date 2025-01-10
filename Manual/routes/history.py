@@ -49,7 +49,7 @@ def history():
     # 處理圖片為 base64 格式
     for result in results:
         if result['Image']:
-            image_path = f"static/images/{result['Image']}"
+            image_path = f"C:\CYCU\SA\Fucking_Violation\Manual\static\images\{result['Image']}"
             with open(image_path, "rb") as img_file:
                 result['Image'] = base64.b64encode(img_file.read()).decode('utf-8')
         

@@ -175,7 +175,7 @@ def index():
 
             # 如果有圖片，將圖片轉換為 base64 格式
             if result['Image']:
-                image_path = f"static/images/{result['Image']}"
+                image_path = f"C:\CYCU\SA\Fucking_Violation\Manual\static\images\{result['Image']}"
                 with open(image_path, "rb") as img_file:
                     result['Image'] = base64.b64encode(img_file.read()).decode('utf-8')
 
@@ -255,7 +255,7 @@ def index():
                 result = cursor.fetchone()
 
             if result and result['Image']:
-                image_path = f"static/images/{result['Image']}"
+                image_path = f"C:\CYCU\SA\Fucking_Violation\Manual\static\images\{result['Image']}"
                 with open(image_path, "rb") as img_file:
                     result['Image'] = base64.b64encode(img_file.read()).decode('utf-8')
 
@@ -278,4 +278,5 @@ def index():
         return f"數據庫訪問錯誤: {err}"
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
+    app.run(host="127.0.0.1", port=5001)

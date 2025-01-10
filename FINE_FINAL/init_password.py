@@ -10,7 +10,7 @@ def get_db_connection():
             host='localhost',
             database='violation_db',
             user='root',
-            password='1234'
+            password='0727',
         )
         return connection
     except Exception as e:

@@ -183,6 +183,12 @@
         height: auto;
         margin-right: 20px; /* 增加Logo和標題文字之間的間距 */
     }
+
+    .fixed-image {
+            width: 550px;  /* 調整寬度 /
+            height: 400px; / 調整高度 /
+            object-fit: cover; / 確保圖片保持比例且不變形 */
+    }
         
     </style>
 </head>
@@ -209,7 +215,7 @@
                         <h4 class="card-title">車牌圖片</h4>
                         <div class="card-image">
                             {% if data['Image'] %}
-                                <img src="data:image/jpeg;base64,{{ data['Image'] }}" alt="車牌圖片" class="img-fluid">
+                                <img src="data:image/jpeg;base64,{{ data['Image'] }}" alt="車牌圖片" class="img-fluid fixed-image">
                             {% else %}
                                 <p>無法顯示圖片</p>
                             {% endif %}
