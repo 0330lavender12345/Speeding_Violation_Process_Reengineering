@@ -27,7 +27,7 @@ CREATE TABLE `fine_print_log` (
   `Printer_Staff_ID` varchar(20) DEFAULT NULL,
   `Print_Timestamp` datetime DEFAULT NULL,
   `Processor_IP` varchar(20) DEFAULT NULL,
-  `Fine_Image` varchar(20) DEFAULT NULL,
+  `Fine_Image` varchar(50) DEFAULT NULL,
   `status` varchar(45) DEFAULT '待處理',
   PRIMARY KEY (`Fine_Violation_Report_ID`),
   KEY `Printer_Staff_ID_idx` (`Printer_Staff_ID`),
@@ -35,6 +35,16 @@ CREATE TABLE `fine_print_log` (
   CONSTRAINT `Printer_Staff_ID` FOREIGN KEY (`Printer_Staff_ID`) REFERENCES `users_info` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fine_print_log`
+--
+
+LOCK TABLES `fine_print_log` WRITE;
+/*!40000 ALTER TABLE `fine_print_log` DISABLE KEYS */;
+INSERT INTO `fine_print_log` VALUES (1,'tp001','2025-01-11 02:27:01','127.0.0.1','AFF-0666_20240110000000.png','待處理'),(3,'tp001','2025-01-11 02:27:38','127.0.0.1','BGR-5851_20240110000200_stamped.png','已列印');
+/*!40000 ALTER TABLE `fine_print_log` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Temporary view structure for view `fineview`
@@ -74,9 +84,19 @@ CREATE TABLE `manual_recognition_log` (
   PRIMARY KEY (`MR_Violation_Report_ID`,`Staff_ID`),
   KEY `Staff_ID_idx` (`Staff_ID`),
   CONSTRAINT `MR_Violation_Report_ID` FOREIGN KEY (`MR_Violation_Report_ID`) REFERENCES `national_case_report` (`National_Violation_Report_ID`),
-  CONSTRAINT `Staff_ID` FOREIGN KEY (`Staff_ID`) REFERENCES `users_info` (`user_id`)
+  CONSTRAINT `Staff_ID` FOREIGN KEY (`Staff_ID`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `manual_recognition_log`
+--
+
+LOCK TABLES `manual_recognition_log` WRITE;
+/*!40000 ALTER TABLE `manual_recognition_log` DISABLE KEYS */;
+INSERT INTO `manual_recognition_log` VALUES (3,'U01','127.0.0.1','2025-01-11 02:11:36','correct','BGR-5851'),(4,'U01','127.0.0.1','2025-01-11 02:12:27','correct',NULL),(6,'U01','127.0.0.1','2025-01-11 02:14:24','correct',NULL),(7,'U01','127.0.0.1','2025-01-11 02:14:27','correct',NULL),(11,'U01','127.0.0.1','2025-01-11 02:14:33','correct','PKX-628');
+/*!40000 ALTER TABLE `manual_recognition_log` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `motc_vehicle`
@@ -95,6 +115,16 @@ CREATE TABLE `motc_vehicle` (
   UNIQUE KEY `License_Plate_UNIQUE` (`License_Plate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `motc_vehicle`
+--
+
+LOCK TABLES `motc_vehicle` WRITE;
+/*!40000 ALTER TABLE `motc_vehicle` DISABLE KEYS */;
+INSERT INTO `motc_vehicle` VALUES ('AFF-0666','劉阿豪','小客車','桃園市八德區永福路8號','LEG'),('BGR-5851','劉土豪','小客車','桃園市缺德路87號','LEG');
+/*!40000 ALTER TABLE `motc_vehicle` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `national_case_report`
@@ -128,6 +158,15 @@ CREATE TABLE `national_case_report` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `national_case_report`
+--
+
+LOCK TABLES `national_case_report` WRITE;
+/*!40000 ALTER TABLE `national_case_report` DISABLE KEYS */;
+/*!40000 ALTER TABLE `national_case_report` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -144,6 +183,16 @@ CREATE TABLE `users` (
   UNIQUE KEY `password_UNIQUE` (`password`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('U01','王曉明','U1111','U1111');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `users_info`
@@ -165,6 +214,16 @@ CREATE TABLE `users_info` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `users_info`
+--
+
+LOCK TABLES `users_info` WRITE;
+/*!40000 ALTER TABLE `users_info` DISABLE KEYS */;
+INSERT INTO `users_info` VALUES ('tp001','王小美','ab1111','221b74be478010f1f2c059da687db3ffb193b8f4d14d3a4afa9d21e23e0e70cf','d8a4e0c78256a4aad66c8c7a4f674cc5');
+/*!40000 ALTER TABLE `users_info` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `vehicle_registration`
 --
 
@@ -183,6 +242,15 @@ CREATE TABLE `vehicle_registration` (
   CONSTRAINT `Violation_Report_ID` FOREIGN KEY (`Violation_Report_ID`) REFERENCES `violation_record` (`Violation_Report_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vehicle_registration`
+--
+
+LOCK TABLES `vehicle_registration` WRITE;
+/*!40000 ALTER TABLE `vehicle_registration` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vehicle_registration` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `violation_record`
@@ -207,8 +275,17 @@ CREATE TABLE `violation_record` (
   PRIMARY KEY (`Violation_Report_ID`),
   UNIQUE KEY ` Violation_Report_ID_UNIQUE` (`Violation_Report_ID`),
   UNIQUE KEY `Image_UNIQUE` (`Image`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `violation_record`
+--
+
+LOCK TABLES `violation_record` WRITE;
+/*!40000 ALTER TABLE `violation_record` DISABLE KEYS */;
+/*!40000 ALTER TABLE `violation_record` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Final view structure for view `fineview`
@@ -237,4 +314,4 @@ CREATE TABLE `violation_record` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-10 20:54:43
+-- Dump completed on 2025-01-11  3:02:36
