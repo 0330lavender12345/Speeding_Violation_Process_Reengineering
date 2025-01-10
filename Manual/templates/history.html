@@ -138,11 +138,19 @@
             color: #f6f6f6; /* 文字顏色 */
             transition: background-color 0.3s ease; /* 添加平滑過渡效果 */
         }
+
+        .header-left img {
+        max-width: 60px; /* 調整Logo的最大寬度，讓它和文字大小差不多 */
+        height: auto;
+        margin-right: 20px; /* 增加Logo和標題文字之間的間距 */
+    }
+        
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo">
             <h2>無法辨識歷史紀錄</h2>
             <div class="btn-group">
                 <a href="{{ url_for('index') }}" class="btn btn-secondary">返回車牌辨識</a>
