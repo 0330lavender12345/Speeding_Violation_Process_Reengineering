@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>車牌辨識歷史紀錄</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            padding: 40px;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .header {
+            display: flex;
+            background-color: #18334f;
+            color: #fff;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            
+        }
+        .header-left h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            margin-right: 20px;
+        }
+        .header-left a {
+            font-size: 1rem;
+            color: #000000;
+            background-color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .header-user {
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+        .header-user span {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 15px;
+        }
+        .header-user a {
+            font-size: 1rem;
+            color: #fff;
+            background-color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .img-fluid {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+        }
+
+        /* 美化表格 */
+        .table {
+            table-layout: fixed;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            padding: 15px;
+            text-align: center;  /* 使所有文字置中 */
+            vertical-align: middle;  /* 使所有文字垂直置中 */
+            border-bottom: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+            color: #495057;
+        }
+        .table td {
+            color: #495057;
+        }
+        .table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .table img {
+            width: 100px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        /* 調整案件ID欄位的寬度 */
+        .table th.case-id, .table td.case-id {
+            width: 10%;  /* 小一點的寬度 */
+        }
+
+        /* 調整辨識結果欄位的寬度 */
+        .table th.recognition-result, .table td.recognition-result {
+            width: 15%;  /* 小一點的寬度 */
+        }
+        
+        /* 讓「違規地點」欄位能夠換行 */
+        .table td.violation-location {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .btn, a {
+            font-weight: bold; /* 加粗字體 */
+        }
+
+        .header-left a:hover {
+            background-color: #4c5157; /* 顯示的背景色 */
+            color: #f6f6f6; /* 文字顏色 */
+            transition: background-color 0.3s ease; /* 添加平滑過渡效果 */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h2>無法辨識歷史紀錄</h2>
+            <div class="btn-group">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">返回車牌辨識</a>
+            </div>
+        </div>
+        <div class="header-user">
+            <span>交通佐理員 {{ user_full_name }}</span>
+            <a href="{{ url_for('logout') }}">登出</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="case-id">案件</th>
+                            <th>圖片</th>
+                            <th class="recognition-result">辨識結果</th>
+                            <th>紀錄時間</th>
+                            <th>違規地點</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td class="case-id">{{ record['National_Case_ID'] }}</td>
+                            <td>
+                                {% if record['Image'] %}
+                                    <img src="data:image/jpeg;base64,{{ record['Image'] }}" alt="Image" class="img-fluid">
+                                {% else %}
+                                    <span>無圖片</span>
+                                {% endif %}
+                            </td>
+                            <td class="recognition-result">
+                                {% if record['Recognition_Result'] == 'NNA' %}
+                                    無法辨識
+                                {% elif record['Recognition_Result'] == 'DDD' %}
+                                    重複車牌
+                                {% else %}
+                                    {{ record['Recognition_Result'] }}
+                                {% endif %}
+                            </td>
+                            <td>{{ record['Record_Timestamp'] }}</td>
+                            <td class="violation-location">{{ record['Violation_Location'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // 這裡可以加入所需的 JavaScript 功能
+    </script>
+</body>
+</html>

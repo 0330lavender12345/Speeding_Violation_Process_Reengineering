@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>車牌人工辨識系統</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa; /* 淺灰背景 */
+            color: #333;  /* 深色文字 */
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            padding: 40px;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0; /* 淺灰邊框 */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 陰影效果 */
+            margin-bottom: 20px;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .card-title {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        .table {
+            table-layout: fixed;
+            width: 100%;
+            background-color: #fff;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            word-wrap: break-word;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        .table th {
+            background-color: #f1f1f1;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .btn {
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background-color: #18185b;
+            border-color: #18185b;
+        }
+        .btn-warning {
+            background-color: #ffd500;
+            border-color: #ffc400;
+        }
+        .btn-secondary {
+            background-color: #8c98a2;
+            border-color: #8c98a2;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #c82333;
+        }
+        .alert-info {
+            font-weight: bold;
+            font-size: larger;
+            background-color: #faf9f9;
+            color: #545050c2;
+            border-color: #a8a7a7;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .img-fluid {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .d-flex {
+            margin-bottom: 20px;
+        }
+        .header {
+            display: flex;
+            background-color: #18334f;
+            color: #fff;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 30px 40px; /* 增加上下左右的間距 */
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-left h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            margin-right: 20px; /* 增加右邊的間距 */
+        }
+        .header-left a {
+            font-size: 1rem;
+            color: #000000;
+            background-color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .header h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            margin-right: 30px; /* 增加右邊的間距 */
+        }
+        .header-user {
+            display: flex;
+            align-items: center;
+        }
+        .header-user span {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 15px; /* 增加與登出按鈕的間距 */
+        }
+        .header-user a {
+            font-size: 1rem;
+            color: #fff;
+            background-color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .card-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end; /* 右對齊 */
+            gap: 10px; /* 按鈕間距 */
+            margin-top: 10px;
+        }
+        .btn-submit {
+            background-color: #000000; /* 黑色背景 */
+            border-color: #000000;    /* 黑色邊框 */
+        }
+        .btn-primary:hover {
+            background-color: #0000009b; /* 深灰色背景，讓按鈕有滑動效果 */
+            border-color: #0000009b;    /* 深灰色邊框 */
+        }
+
+        .btn {
+            font-weight: bold; /* 加粗字體 */
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 1rem;
+        }
+
+        .btn, a {
+            font-weight: bold; /* 加粗字體 */
+        }
+
+        .header-left a:hover {
+            background-color: #4c5157; /* 顯示的背景色 */
+            color: #f6f6f6; /* 文字顏色 */
+            transition: background-color 0.3s ease; /* 添加平滑過渡效果 */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h2>車牌人工辨識系統</h2>
+            <a href="{{ url_for('history') }}" >查看無法辨識紀錄</a>
+        </div>
+        <div class="header-user">
+            <span>交通佐理員 王曉明</span>
+            <a href="{{ url_for('logout') }}">登出</a>
+        </div>
+    </div>
+
+    
+    <div class="container">
+        {% if data %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">車牌圖片</h4>
+                        <div class="card-image">
+                            {% if data['Image'] %}
+                                <img src="data:image/jpeg;base64,{{ data['Image'] }}" alt="車牌圖片" class="img-fluid">
+                            {% else %}
+                                <p>無法顯示圖片</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- 這裡移動了上一張與下一張按鈕至右邊 -->
+                        <div class="footer-buttons">
+                            <form method="POST" action="{{ url_for('index') }}" class="d-inline">
+                                <button type="submit" name="action" value="previous_image" class="btn btn-secondary">上一張圖片</button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('index') }}" class="d-inline">
+                                <input type="hidden" name="current_timestamp" value="{{ data['Record_Timestamp'] }}">
+                                <button type="submit" name="action" value="next_image" class="btn btn-secondary">下一張圖片</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h4 class="card-title">案件資訊</h4>
+                        <table class="table">
+                            <tr style="display: none;">
+                                <th>案件編號</th>
+                                <td>{{ data.National_Case_ID or 'N/A' }}</td>
+                            </tr>
+                            <tr style="display: none;">
+                                <th>違規報告編號</th>
+                                <td>{{ data.National_Violation_Report_ID or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>目前辨識結果</th>
+                                <td>{{  data['Recognition_Display']  }}</td>
+                            </tr>
+                            <tr>
+                                <th>違規時間</th>
+                                <td>{{ data.Record_Timestamp or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>違規地點</th>
+                                <td>{{ data.Violation_Location or 'N/A' }}</td>
+                            </tr>
+                        </table>
+                        
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form id="recognition-form" method="POST" action="{{ url_for('index') }}">
+                            <div class="form-group">
+                                <label for="recognition_result">車牌號碼</label>
+                                <input type="text" id="recognition_result" name="recognition_result" class="form-control" placeholder="請輸入車牌號碼">
+                            </div>
+                            <button type="submit" name="action" value="submit_result" class="btn btn-primary w-100 mt-3">確認送出</button>
+                            
+                            <div class="form-group mt-3">
+                                <label for="error_type">錯誤類型</label>
+                                <select id="error_type" name="error_type" class="form-control">
+                                    <option value="cannot_recognize" selected>無法辨識</option>
+                                    <option value="duplicate_plate">重複車牌</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="National_Case_ID" name="National_Case_ID" value="{{ data.National_Case_ID }}">
+                            
+                            <button type="submit" name="action" value="submit_error" class="btn btn-warning w-100 mt-2">提交錯誤</button>
+                        </form>
+
+                        {% if error %}
+                        <script type="text/javascript">
+                            alert("{{ error }}");
+                        </script>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">目前沒有待處理的車牌辨識資料。</div>
+        {% endif %}
+    </div>
+
+    <script type="text/javascript">
+        $('#recognition-form').on('submit', function(event) {
+            event.preventDefault();
+            
+            var recognition_result = $('#recognition_result').val();
+            var action = $("button[type=submit]:focus").val();
+            var error_type = $('#error_type').val(); // 獲取錯誤類型
+            var national_case_id = $('#National_Case_ID').val();
+            
+            if (action === 'submit_error') {
+                recognition_result = ""; // 清空車牌號碼，只傳錯誤類型
+            }
+
+            // 發送 AJAX 請求
+            $.ajax({
+                type: 'POST',
+                url: '{{ url_for("index") }}',
+                data: {
+                    recognition_result: recognition_result,
+                    action: action,
+                    error_type: error_type, // 傳送錯誤類型
+                    National_Case_ID: national_case_id
+                },
+                success: function(response) {
+                    location.reload(); // 使用 location.reload() 刷新頁面
+                },
+                error: function() {
+                    alert("發生錯誤，請稍後再試！");
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
