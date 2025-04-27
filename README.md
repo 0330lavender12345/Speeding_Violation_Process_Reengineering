@@ -4,6 +4,7 @@
 
 ## 協作者名單
 [lavender0330](https://github.com/0330lavender12345)<br>
+[RinYu](https://github.com/DlsuMtStyle)<br>
 [linyuchiao](https://github.com/linyuchiao)<br>
 [min5t](https://github.com/min5t)<br>
 [lwjwinnie](https://github.com/lwjwinnie)<br>
